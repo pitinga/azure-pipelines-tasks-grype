@@ -1,0 +1,15 @@
+{
+  "name": "azure-pipelines-tasks-grype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Node24 Azure Pipelines tasks: install Grype + Syft and scan vulnerabilities",
+  "license": "MIT",
+  "engines": {"node": ">=24"},
+  "scripts": {
+    "prepare:tasks": "node tools/prepare.js",
+    "test": "node tools/prepare.js && node --test tests/*.test.js",
+    "check": "node tools/prepare.js && node --check lib/ado.js && node --check lib/cli.js && node --check lib/installer.js && node --check GrypeInstaller/index.js && node --check GrypeScan/index.js && node --test tests/*.test.js",
+    "package:vsix": "node tools/prepare.js && npx --yes tfx-cli@0.24.2 extension create --manifest-globs vss-extension.json --output-path dist",
+    "verify:vsix": "node tools/verify-vsix.js"
+  }
+}

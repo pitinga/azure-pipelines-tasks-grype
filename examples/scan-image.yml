@@ -1,0 +1,33 @@
+pool:
+  vmImage: ubuntu-latest
+steps:
+- task: Docker@2
+  displayName: Autenticar no Azure Container Registry
+  inputs:
+    command: login
+    containerRegistry: MinhaServiceConnectionACR
+
+- task: GrypeInstaller@0
+  displayName: Instalar Grype + Syft
+  inputs:
+    grypeVersion: latest
+    syftVersion: latest
+
+- task: GrypeScan@0
+  displayName: Scan Grype em imagem ACR
+  inputs:
+    sourceType: docker
+    target: 'meuacr.azurecr.io/app:$(Build.BuildId)'
+    format: json
+    outputFile: '$(Build.ArtifactStagingDirectory)/grype.json'
+    failOn: high
+    byCve: true
+    onlyFixed: true
+    dbAutoUpdate: true
+
+- task: PublishBuildArtifacts@1
+  condition: always()
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: GrypeReport
+    publishLocation: Container

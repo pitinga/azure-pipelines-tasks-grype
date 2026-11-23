@@ -1,0 +1,42 @@
+{
+  "author": "Pitinga",
+  "category": "Utility",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "minimumAgentVersion": "4.265.1",
+  "version": {
+    "Major": 0,
+    "Minor": 1,
+    "Patch": 0
+  },
+  "execution": {
+    "Node24": {
+      "target": "index.js"
+    }
+  },
+  "id": "981e2e11-1e67-45b9-83ba-0e26ac37a89f",
+  "name": "GrypeInstaller",
+  "friendlyName": "Grype & Syft Installer",
+  "description": "Instala Grype e Syft a partir das releases oficiais, detectando SO/CPU e verificando SHA-256.",
+  "instanceNameFormat": "Instalar Grype $(grypeVersion) + Syft $(syftVersion)",
+  "inputs": [
+    {
+      "name": "grypeVersion",
+      "type": "string",
+      "label": "Versão do Grype",
+      "required": true,
+      "defaultValue": "latest",
+      "helpMarkDown": "`latest` ou versão estável `0.122.1` / `v0.122.1`. Cada versão é resolvida e verificada no GitHub oficial."
+    },
+    {
+      "name": "syftVersion",
+      "type": "string",
+      "label": "Versão do Syft",
+      "required": true,
+      "defaultValue": "latest",
+      "helpMarkDown": "`latest` ou versão estável `1.57.2` / `v1.57.2`. Grype usa a biblioteca Syft internamente, mas o instalador disponibiliza também sua CLI."
+    }
+  ]
+}

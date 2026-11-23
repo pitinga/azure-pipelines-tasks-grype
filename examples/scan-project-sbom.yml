@@ -1,0 +1,26 @@
+pool:
+  vmImage: ubuntu-latest
+steps:
+- task: GrypeInstaller@0
+  inputs:
+    grypeVersion: latest
+    syftVersion: latest
+
+- task: GrypeScan@0
+  inputs:
+    sourceType: dir
+    target: '$(Build.SourcesDirectory)'
+    format: sarif
+    outputFile: '$(Build.ArtifactStagingDirectory)/grype.sarif'
+    failOn: critical
+    generateSbom: true
+    sbomFile: '$(Build.ArtifactStagingDirectory)/sbom.syft.json'
+    excludePaths: |
+      **/node_modules/**
+      **/.git/**
+
+- task: PublishBuildArtifacts@1
+  condition: always()
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: GrypeAndSyft

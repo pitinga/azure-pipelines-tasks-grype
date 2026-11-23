@@ -1,0 +1,83 @@
+{
+  "manifestVersion": 1,
+  "id": "azure-pipelines-tasks-grype",
+  "name": "Grype & Syft - Vulnerability Tasks",
+  "version": "0.1.0",
+  "publisher": "pitinga",
+  "description": "Install Grype and Syft with SHA256 verification; scan images, filesystems and SBOMs using native Grype options in Azure Pipelines.",
+  "public": false,
+  "targets": [
+    {
+      "id": "Microsoft.VisualStudio.Services"
+    }
+  ],
+  "categories": [
+    "Azure Pipelines"
+  ],
+  "tags": [
+    "Grype",
+    "Syft",
+    "DevSecOps",
+    "Security",
+    "SBOM",
+    "Vulnerability",
+    "Node24"
+  ],
+  "icons": {
+    "default": "images/extension-icon.png"
+  },
+  "content": {
+    "details": {
+      "path": "overview.md"
+    },
+    "license": {
+      "path": "LICENSE"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "uri": "https://github.com/pitinga/azure-pipelines-tasks-grype"
+  },
+  "links": {
+    "support": {
+      "uri": "https://github.com/pitinga/azure-pipelines-tasks-grype/issues"
+    },
+    "repository": {
+      "uri": "https://github.com/pitinga/azure-pipelines-tasks-grype"
+    }
+  },
+  "files": [
+    {
+      "path": "GrypeInstaller"
+    },
+    {
+      "path": "GrypeScan"
+    }
+  ],
+  "contributions": [
+    {
+      "id": "grype-installer",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "GrypeInstaller"
+      }
+    },
+    {
+      "id": "grype-scan",
+      "type": "ms.vss-distributed-task.task",
+      "targets": [
+        "ms.vss-distributed-task.tasks"
+      ],
+      "properties": {
+        "name": "GrypeScan"
+      }
+    }
+  ],
+  "branding": {
+    "color": "#17324D",
+    "theme": "dark"
+  }
+}

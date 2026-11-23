@@ -1,0 +1,370 @@
+{
+  "author": "Pitinga",
+  "category": "Utility",
+  "visibility": [
+    "Build",
+    "Release"
+  ],
+  "minimumAgentVersion": "4.265.1",
+  "version": {
+    "Major": 0,
+    "Minor": 1,
+    "Patch": 0
+  },
+  "execution": {
+    "Node24": {
+      "target": "index.js"
+    }
+  },
+  "id": "9b58f8e1-df00-4e5c-a836-55d41afb91ee",
+  "name": "GrypeScan",
+  "friendlyName": "Grype Vulnerability Scan",
+  "description": "Analisa imagens, SBOMs, projetos, arquivos e vulnerabilidades com parâmetros nativos do Grype.",
+  "instanceNameFormat": "Analisar com Grype $(target)",
+  "groups": [
+    {
+      "name": "advanced",
+      "displayName": "Configurações avançadas",
+      "isExpanded": false
+    }
+  ],
+  "inputs": [
+    {
+      "name": "operation",
+      "type": "pickList",
+      "label": "Operação",
+      "required": false,
+      "defaultValue": "scan",
+      "helpMarkDown": "`scan` é o modo normal. Operações `db*` correspondem a `grype db <comando>`; utilize additionalArguments para argumentos específicos.",
+      "options": {
+        "scan": "scan",
+        "dbCheck": "dbCheck",
+        "dbUpdate": "dbUpdate",
+        "dbStatus": "dbStatus",
+        "dbList": "dbList",
+        "dbProviders": "dbProviders",
+        "dbImport": "dbImport",
+        "dbDiff": "dbDiff",
+        "dbSearch": "dbSearch"
+      }
+    },
+    {
+      "name": "target",
+      "type": "string",
+      "label": "Alvo da análise",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Imagem, diretório, JAR/arquivo, SBOM, PURL ou CPE. Use `dir:.`, `sbom:path`, `registry:...`, `pkg:...`; obrigatório para scan."
+    },
+    {
+      "name": "sourceType",
+      "type": "pickList",
+      "label": "Origem / tipo de alvo",
+      "required": false,
+      "defaultValue": "auto",
+      "helpMarkDown": "`auto` mantém detecção nativa. Outro valor prefixa o alvo, por exemplo `dir:./` ou `registry:alpine:latest`.",
+      "options": {
+        "auto": "auto",
+        "docker": "docker",
+        "registry": "registry",
+        "podman": "podman",
+        "containerd": "containerd",
+        "docker-archive": "docker-archive",
+        "oci-archive": "oci-archive",
+        "oci-dir": "oci-dir",
+        "singularity": "singularity",
+        "dir": "dir",
+        "file": "file",
+        "sbom": "sbom"
+      }
+    },
+    {
+      "name": "fromSources",
+      "type": "multiLine",
+      "label": "Origens (`--from` repetido)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Um source type por linha (ex.: docker,registry) para controlar a precedência de fontes. Use com sourceType=auto.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "workingDirectory",
+      "type": "string",
+      "label": "Diretório de execução",
+      "required": false,
+      "defaultValue": "$(System.DefaultWorkingDirectory)",
+      "helpMarkDown": "Pasta existente de execução; suporta arquivos e targets relativos."
+    },
+    {
+      "name": "format",
+      "type": "pickList",
+      "label": "Formato principal (`--output`)",
+      "required": false,
+      "defaultValue": "table",
+      "helpMarkDown": "Formatos suportados pelo Grype.",
+      "options": {
+        "table": "table",
+        "json": "json",
+        "cyclonedx": "cyclonedx",
+        "cyclonedx-json": "cyclonedx-json",
+        "sarif": "sarif",
+        "template": "template"
+      }
+    },
+    {
+      "name": "outputFile",
+      "type": "string",
+      "label": "Arquivo de relatório (`--file`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Caminho absoluto ou relativo para gravar relatório. Vazio = console. Aceita `$(Build.ArtifactStagingDirectory)/grype.json`."
+    },
+    {
+      "name": "failOn",
+      "type": "pickList",
+      "label": "Falhar a partir da severidade (`--fail-on`)",
+      "required": false,
+      "defaultValue": "none",
+      "helpMarkDown": "`none`: apenas informar. `critical`, `high`, `medium`, `low` ou `negligible` fazem Grype retornar código 2 quando encontram uma vulnerabilidade no limiar.",
+      "options": {
+        "none": "none",
+        "negligible": "negligible",
+        "low": "low",
+        "medium": "medium",
+        "high": "high",
+        "critical": "critical"
+      }
+    },
+    {
+      "name": "byCve",
+      "type": "boolean",
+      "label": "Orientar resultados por CVE (`--by-cve`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Prefere CVE à identificação original quando possível."
+    },
+    {
+      "name": "onlyFixed",
+      "type": "boolean",
+      "label": "Somente vulnerabilidades com correção (`--only-fixed`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Ignora resultados sem correção disponível. Não combinar com onlyNotFixed."
+    },
+    {
+      "name": "onlyNotFixed",
+      "type": "boolean",
+      "label": "Somente vulnerabilidades sem correção (`--only-notfixed`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Ignora resultados corrigíveis. Não combinar com onlyFixed."
+    },
+    {
+      "name": "ignoreStates",
+      "type": "string",
+      "label": "Ignorar estados (`--ignore-states`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Lista separada por vírgula: `fixed,not-fixed,unknown,wont-fix`.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "addCpesIfNone",
+      "type": "boolean",
+      "label": "Gerar CPEs ausentes (`--add-cpes-if-none`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Cria CPEs para pacotes sem informações de CPE.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "excludePaths",
+      "type": "multiLine",
+      "label": "Excluir caminhos (`--exclude`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Um glob por linha ou separado por ponto e vírgula. Exemplos `**/node_modules/**`.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "scope",
+      "type": "pickList",
+      "label": "Escopo de camadas (`--scope`)",
+      "required": false,
+      "defaultValue": "squashed",
+      "helpMarkDown": "Camadas de imagens.",
+      "options": {
+        "squashed": "squashed",
+        "all-layers": "all-layers",
+        "deep-squashed": "deep-squashed"
+      },
+      "groupName": "advanced"
+    },
+    {
+      "name": "sortBy",
+      "type": "pickList",
+      "label": "Ordenação (`--sort-by`)",
+      "required": false,
+      "defaultValue": "risk",
+      "helpMarkDown": "Critério de ordenação.",
+      "options": {
+        "risk": "risk",
+        "package": "package",
+        "severity": "severity",
+        "epss": "epss",
+        "kev": "kev",
+        "vulnerability": "vulnerability"
+      },
+      "groupName": "advanced"
+    },
+    {
+      "name": "platform",
+      "type": "string",
+      "label": "Plataforma de imagem (`--platform`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Ex.: linux/amd64, linux/arm64.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "distro",
+      "type": "string",
+      "label": "Distribuição (`--distro`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Ex.: alpine:3.20.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "label": "Nome exibido (`--name`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Atribui nome ao alvo.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "configFiles",
+      "type": "multiLine",
+      "label": "Arquivos de configuração (`--config`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Um caminho por linha (ou separados por ponto e vírgula).",
+      "groupName": "advanced"
+    },
+    {
+      "name": "profiles",
+      "type": "multiLine",
+      "label": "Profiles de configuração (`--profile`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Um profile por linha.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "vexFiles",
+      "type": "multiLine",
+      "label": "Documentos VEX (`--vex`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Um VEX por linha.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "template",
+      "type": "string",
+      "label": "Modelo Go (`--template`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Arquivo template quando format=template.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "additionalFormats",
+      "type": "multiLine",
+      "label": "Formatos extras (`--output`)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Formatos extras, separados por linha. Permite múltiplos `--output`.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "showSuppressed",
+      "type": "boolean",
+      "label": "Mostrar achados suprimidos (`--show-suppressed`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Apenas formato `table` único.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "quiet",
+      "type": "boolean",
+      "label": "Modo silencioso (`--quiet`)",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Reduz logs do Grype.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "verbose",
+      "type": "pickList",
+      "label": "Verboso (`-v`/`-vv`)",
+      "required": false,
+      "defaultValue": "0",
+      "helpMarkDown": "0=normal; 1=info; 2=debug.",
+      "options": {
+        "0": "0",
+        "1": "1",
+        "2": "2"
+      },
+      "groupName": "advanced"
+    },
+    {
+      "name": "dbAutoUpdate",
+      "type": "boolean",
+      "label": "Atualizar banco de CVEs",
+      "required": false,
+      "defaultValue": "true",
+      "helpMarkDown": "`false` configura GRYPE_DB_AUTO_UPDATE=false. Banco local deve existir.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "dbCacheDir",
+      "type": "string",
+      "label": "Pasta de cache do banco",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Define GRYPE_DB_CACHE_DIR; persista em agentes privados se necessário.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "generateSbom",
+      "type": "boolean",
+      "label": "Gerar SBOM prévia com Syft",
+      "required": false,
+      "defaultValue": "false",
+      "helpMarkDown": "Se true, gera Syft JSON e depois analisa com Grype. Útil para produzir SBOM rastreável. Para escanear SBOM já existente, deixe false.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "sbomFile",
+      "type": "string",
+      "label": "Caminho da SBOM gerada",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Usado com generateSbom=true. Vazio: arquivo temporário excluído após scan; caminho preenchido: preservado.",
+      "groupName": "advanced"
+    },
+    {
+      "name": "additionalArguments",
+      "type": "multiLine",
+      "label": "Argumentos extras (sem shell)",
+      "required": false,
+      "defaultValue": "",
+      "helpMarkDown": "Opções não expostas ou específicas de `grype db`. Aceita aspas para preservar espaços. Não informe segredos, use variáveis secretas.",
+      "groupName": "advanced"
+    }
+  ]
+}
