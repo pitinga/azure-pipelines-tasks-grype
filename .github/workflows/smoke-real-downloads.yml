@@ -37,7 +37,7 @@ jobs:
       - name: Test real installs and optional SBOM scan
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          ${{ inputs.grypeVersion }}_REQUESTED: ${{ inputs.grypeVersion }}
-          ${{ inputs.syftVersion }}_REQUESTED: ${{ inputs.syftVersion }}
+          GRYPE_VERSION_REQUESTED: ${{ inputs.grypeVersion }}
+          SYFT_VERSION_REQUESTED: ${{ inputs.syftVersion }}
           SMOKE_FULL_SCAN: ${{ inputs.fullScan && matrix.os == 'ubuntu-latest' }}
         run: node tools/smoke-real.js
