@@ -1,7 +1,7 @@
 name: Launch one-time Grype + Syft smoke
 on:
   push:
-    paths: ['.github/workflows/launch-smoke.yml', '.github/workflows/smoke-real-downloads.yml']
+    paths: ['.github/workflows/launch-smoke.yml', '.github/workflows/smoke-real-downloads.yml', 'lib/installer.js']
 permissions:
   contents: read
   actions: write

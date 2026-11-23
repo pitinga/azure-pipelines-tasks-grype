@@ -6,6 +6,7 @@ const path=require('node:path');
 const os=require('node:os');
 const crypto=require('node:crypto');
 const {execute}=require('./cli');
+const {once}=require('node:events');
 const MAX_REDIRECTS=8;
 const MAX_ASSET=512*1024*1024;
 const MAX_METADATA=5*1024*1024;
@@ -19,14 +20,14 @@ async function request(url,destination=null,maxBytes=MAX_METADATA,redirects=0){i
  let bytes=0;
  if(!destination){const chunks=[];for await(const chunk of res){bytes+=chunk.length;if(bytes>maxBytes)throw new Error('Metadados muito grandes.');chunks.push(chunk);}return Buffer.concat(chunks);}
  const output=fs.createWriteStream(destination,{flags:'wx'});
- try{for await(const chunk of res){bytes+=chunk.length;if(bytes>maxBytes)throw new Error('Asset excedeu limite de tamanho.');if(!output.write(chunk))await new Promise((resolve,reject)=>{output.once('drain',resolve);output.once('error',reject);});}await new Promise((resolve,reject)=>output.end(e=>e?reject(e):resolve()));return destination;}
+ try{for await(const chunk of res){bytes+=chunk.length;if(bytes>maxBytes)throw new Error('Asset excedeu limite de tamanho.');if(!output.write(chunk))await once(output,'drain');}await new Promise((resolve,reject)=>output.end(e=>e?reject(e):resolve()));return destination;}
  catch(e){output.destroy();throw e;}
 }
 async function getText(url){return (await request(url)).toString('utf8');}
 function parseChecksum(body,filename){for(const line of body.split(/\r?\n/)){const m=line.match(/^([A-Fa-f0-9]{64})\s+\*?(.+)$/);if(m&&m[2].trim()===filename)return m[1].toLowerCase();}throw new Error('SHA-256 não encontrado para '+filename);}
 async function sha256(file){const h=crypto.createHash('sha256');for await(const chunk of fs.createReadStream(file))h.update(chunk);return h.digest('hex');}
 async function extract(archive,destination,tool,platform=process.platform){await fsp.mkdir(destination,{recursive:true});const executable=tool+(platform==='win32'?'.exe':'');if(platform==='win32'){
- const ps=`Expand-Archive -LiteralPath '${archive.replace(/'/g,"''")}' -DestinationPath '${destination.replace(/'/g,"''")}' -Force`;
+ const ps=`$ErrorActionPreference='Stop'; Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('${archive.replace(/'/g,"''")}','${destination.replace(/'/g,"''")}')`;
  const encoded=Buffer.from(ps,'utf16le').toString('base64');await execute('powershell.exe',['-NoProfile','-NonInteractive','-EncodedCommand',encoded]);
  }else await execute('tar',['-xzf',archive,'-C',destination,'--',executable]);
  const result=path.join(destination,executable);if(!fs.existsSync(result))throw new Error('Executável não encontrado no archive: '+executable);if(platform!=='win32')await fsp.chmod(result,0o755);return result;
