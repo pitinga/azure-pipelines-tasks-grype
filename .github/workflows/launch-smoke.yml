@@ -1,0 +1,15 @@
+name: Launch one-time Grype + Syft smoke
+on:
+  push:
+    paths: ['.github/workflows/launch-smoke.yml']
+permissions:
+  contents: read
+  actions: write
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request real Grype and Syft downloads on three platforms
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run smoke-real-downloads.yml --ref main -f grypeVersion=latest -f syftVersion=latest -f fullScan=true
