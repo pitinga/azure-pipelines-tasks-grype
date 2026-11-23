@@ -1,0 +1,46 @@
+name: Validate and package Grype + Syft VSIX
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    name: Verify Node24 (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Verify runtime
+        run: node -e "if(process.versions.node.split('.')[0]!=='24')process.exit(1)"
+      - name: Test
+        run: npm run check
+  package:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Build VSIX
+        run: npm run package:vsix
+      - name: Validate Marketplace package
+        run: npm run verify:vsix
+      - uses: actions/upload-artifact@v7
+        with:
+          name: grype-syft-vsix
+          path: dist/*.vsix
+          if-no-files-found: error
+          retention-days: 90
