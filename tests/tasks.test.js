@@ -8,7 +8,7 @@ const root=path.resolve(__dirname,'..');
 const config=(values={})=>[(name,fallback='')=>values[name]??fallback,(name,fallback=false)=>values[name]??fallback];
 test('Manifest: duas tasks Node24 independentes, privadas e originais',()=>{
  const manifest=require('../vss-extension.json'),installer=require('../GrypeInstaller/task.json'),scanner=require('../GrypeScan/task.json');
- assert.equal(manifest.version,'0.1.0');assert.equal(manifest.public,false);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
+ assert.equal(manifest.version,'0.1.1');assert.equal(manifest.public,false);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
  assert.deepEqual(manifest.contributions.map(x=>x.properties.name),['GrypeInstaller','GrypeScan']);
  for(const t of [installer,scanner]){assert.deepEqual(Object.keys(t.execution),['Node24']);assert.equal(t.minimumAgentVersion,'4.265.1');assert.equal(t.version.Major,0);}
  assert.notEqual(installer.id,scanner.id);
@@ -96,4 +96,15 @@ test('Smoke test manual usa Node24 e downloads reais por matriz sem publicar',()
  assert.match(workflow,/node-version: '24'/);
  assert.match(workflow,/node tools\/smoke-real.js/);
  assert.doesNotMatch(workflow,/extension publish|marketplace-production/);
+});
+
+
+test('MIT license included in VSIX with explicit asset and byte-level verification',()=>{
+ const m=require('../vss-extension.json');
+ assert.equal(m.version,'0.1.1');
+ assert.equal(require('../package.json').version,m.version);
+ assert.equal(m.content.license.path,'LICENSE');
+ assert.ok(m.files.some(f=>f.path==='LICENSE'&&f.addressable===true));
+ assert.match(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),/MIT License/);
+ assert.match(fs.readFileSync(path.join(root,'tools/verify-vsix.js'),'utf8'),/bytes.equals\(fs.readFileSync/);
 });

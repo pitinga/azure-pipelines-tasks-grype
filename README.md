@@ -4,7 +4,7 @@ Extensão independente para Azure Pipelines, baseada na arquitetura da extensão
 
 - **GrypeInstaller@0:** instala Grype e Syft, detecta Windows/Linux/macOS e x64/ARM64, valida os checksums SHA-256 de releases oficiais, armazena em cache por versão/SO/CPU, e adiciona ambos ao PATH do job.
 - **GrypeScan@0:** analisa imagens Docker/ACR, registries, diretórios, arquivos/JARs, SBOMs (Syft/SPDX/CycloneDX), archives OCI, PURL e CPEs. Expõe flags nativas e oferece, opcionalmente, geração de Syft JSON antes do scan.
-- Executor **Node24 somente**, agente Azure Pipelines **>= 4.265.1**, sem dependências npm de runtime, instalado sem sudo. Extensão inicialmente **privada** (`public: false`) e versão **0.1.0**.
+- Executor **Node24 somente**, agente Azure Pipelines **>= 4.265.1**, sem dependências npm de runtime, instalado sem sudo. Extensão inicialmente **privada** (`public: false`) e versão **0.1.1**.
 
 ## Uso básico
 
@@ -137,3 +137,7 @@ O workflow manual [smoke-real-downloads.yml](.github/workflows/smoke-real-downlo
 - Instalação: https://oss.anchore.com/docs/installation/grype/
 - Downloads Syft: https://github.com/anchore/syft/releases
 - Downloads Grype: https://github.com/anchore/grype/releases
+
+## Licença distribuída e validação
+
+A versão técnica **0.1.1** inclui a licença MIT integral no VSIX e testa sua correspondência byte a byte com o repositório. Os GUIDs e as opções das tasks não foram alterados. Esta versão **não foi publicada no Marketplace**; a homologação continua.
