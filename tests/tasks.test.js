@@ -8,7 +8,7 @@ const root=path.resolve(__dirname,'..');
 const config=(values={})=>[(name,fallback='')=>values[name]??fallback,(name,fallback=false)=>values[name]??fallback];
 test('Manifest: duas tasks Node24 independentes, privadas e originais',()=>{
  const manifest=require('../vss-extension.json'),installer=require('../GrypeInstaller/task.json'),scanner=require('../GrypeScan/task.json');
- assert.equal(manifest.version,'0.1.2');assert.equal(manifest.public,true);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
+ assert.equal(manifest.version,'0.1.3');assert.equal(manifest.public,true);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
  assert.deepEqual(manifest.contributions.map(x=>x.properties.name),['GrypeInstaller','GrypeScan']);
  for(const t of [installer,scanner]){assert.deepEqual(Object.keys(t.execution),['Node24']);assert.equal(t.minimumAgentVersion,'4.265.1');assert.equal(t.version.Major,0);}
  assert.notEqual(installer.id,scanner.id);
@@ -101,7 +101,7 @@ test('Smoke test manual usa Node24 e downloads reais por matriz sem publicar',()
 
 test('MIT license included in VSIX with explicit asset and byte-level verification',()=>{
  const m=require('../vss-extension.json');
- assert.equal(m.version,'0.1.2');
+ assert.equal(m.version,'0.1.3');
  assert.equal(require('../package.json').version,m.version);
  assert.equal(m.content.license.path,'LICENSE');
  assert.ok(m.files.some(f=>f.path==='LICENSE'&&f.addressable===true));
@@ -119,4 +119,14 @@ test('Public 0.x.y release preserves 0.1 and task Major @0',()=>{
   const task=require('../'+c.properties.name+'/task.json');
   assert.equal(task.version.Major,0);
  }
+});
+
+
+test('Marketplace public identity and product title',()=>{
+ const manifest=require('../vss-extension.json');
+ assert.equal(manifest.publisher,'pitinga');
+ assert.equal(manifest.id,'azure-pipelines-tasks-grype');
+ assert.equal(manifest.name,'Grype - Installer & Scanner');
+ assert.equal(manifest.version,'0.1.3');
+ assert.equal(manifest.public,true);
 });

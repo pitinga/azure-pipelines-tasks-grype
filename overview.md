@@ -1,4 +1,4 @@
-# Grype & Syft — Azure Pipelines
+# Grype - Installer & Scanner — Azure Pipelines
 
 Extensão independente com duas tasks Node24 para instalar os scanners Anchore e analisar vulnerabilidades.
 
