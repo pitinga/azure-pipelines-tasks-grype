@@ -1,4 +1,4 @@
-name: Validate and package Grype + Syft VSIX
+name: Validate and package Grype and Syft VSIX
 on:
   push:
     branches: [main]

@@ -5,7 +5,7 @@ case "$GITHUB_REPOSITORY" in
   pitinga/azure-pipelines-tasks-git) ci_name="Validate and package Git Tasks VSIX"; artifact=git-tasks-vsix;;
   pitinga/azure-pipelines-tasks-flyway) ci_name="Build Flyway extension VSIX"; artifact=flyway;;
   pitinga/azure-pipelines-tasks-trivy) ci_name="Validate and package VSIX"; artifact=trivy-azure-devops-vsix;;
-  pitinga/azure-pipelines-tasks-grype) ci_name="Validate and package Grype + Syft VSIX"; artifact=grype-syft-vsix;;
+  pitinga/azure-pipelines-tasks-grype) ci_name="Validate and package Grype and Syft VSIX"; artifact=grype-syft-vsix;;
   *) echo "::error::Repository not authorized"; exit 1;;
 esac
 sha=$(git rev-parse HEAD)

@@ -5,7 +5,7 @@ on:
       - Validate and package Git Tasks VSIX
       - Build Flyway extension VSIX
       - Validate and package VSIX
-      - Validate and package Grype + Syft VSIX
+      - Validate and package Grype and Syft VSIX
     types: [completed]
   workflow_dispatch:
     inputs:

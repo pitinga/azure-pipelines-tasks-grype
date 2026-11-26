@@ -147,3 +147,14 @@ test('CI-approved GitHub Release is independent of Marketplace and never mutates
  assert.doesNotMatch(marketplace,/^\s+push:/m);
  assert.match(marketplace,/workflow_dispatch:/);
 });
+
+
+test('Grype release listens to the real CI workflow name',()=>{
+ const ci=fs.readFileSync(path.join(root,'.github/workflows/validate-and-package.yml'),'utf8');
+ const release=fs.readFileSync(path.join(root,'.github/workflows/github-release.yml'),'utf8');
+ const script=fs.readFileSync(path.join(root,'.github/scripts/github-release.sh'),'utf8');
+ const expected='Validate and package Grype and Syft VSIX';
+ assert.ok(ci.includes('name: '+expected));
+ assert.ok(release.includes('- '+expected));
+ assert.ok(script.includes(expected));
+});
