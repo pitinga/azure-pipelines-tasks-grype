@@ -2,10 +2,10 @@
   "manifestVersion": 1,
   "id": "azure-pipelines-tasks-grype",
   "name": "Grype & Syft - Vulnerability Tasks",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publisher": "pitinga",
   "description": "Install Grype and Syft with SHA256 verification; scan images, filesystems and SBOMs using native Grype options in Azure Pipelines.",
-  "public": false,
+  "public": true,
   "targets": [
     {
       "id": "Microsoft.VisualStudio.Services"

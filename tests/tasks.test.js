@@ -8,7 +8,7 @@ const root=path.resolve(__dirname,'..');
 const config=(values={})=>[(name,fallback='')=>values[name]??fallback,(name,fallback=false)=>values[name]??fallback];
 test('Manifest: duas tasks Node24 independentes, privadas e originais',()=>{
  const manifest=require('../vss-extension.json'),installer=require('../GrypeInstaller/task.json'),scanner=require('../GrypeScan/task.json');
- assert.equal(manifest.version,'0.1.1');assert.equal(manifest.public,false);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
+ assert.equal(manifest.version,'0.1.2');assert.equal(manifest.public,true);assert.equal(manifest.id,'azure-pipelines-tasks-grype');assert.equal(manifest.publisher,'pitinga');
  assert.deepEqual(manifest.contributions.map(x=>x.properties.name),['GrypeInstaller','GrypeScan']);
  for(const t of [installer,scanner]){assert.deepEqual(Object.keys(t.execution),['Node24']);assert.equal(t.minimumAgentVersion,'4.265.1');assert.equal(t.version.Major,0);}
  assert.notEqual(installer.id,scanner.id);
@@ -101,10 +101,22 @@ test('Smoke test manual usa Node24 e downloads reais por matriz sem publicar',()
 
 test('MIT license included in VSIX with explicit asset and byte-level verification',()=>{
  const m=require('../vss-extension.json');
- assert.equal(m.version,'0.1.1');
+ assert.equal(m.version,'0.1.2');
  assert.equal(require('../package.json').version,m.version);
  assert.equal(m.content.license.path,'LICENSE');
  assert.ok(m.files.some(f=>f.path==='LICENSE'&&f.addressable===true));
  assert.match(fs.readFileSync(path.join(root,'LICENSE'),'utf8'),/MIT License/);
  assert.match(fs.readFileSync(path.join(root,'tools/verify-vsix.js'),'utf8'),/bytes.equals\(fs.readFileSync/);
+});
+
+
+test('Public 0.x.y release preserves 0.1 and task Major @0',()=>{
+ const m=require('../vss-extension.json');
+ assert.match(m.version,/^0\.1\.\d+$/);
+ assert.equal(m.public,true);
+ assert.equal(require('../package.json').version,m.version);
+ for(const c of m.contributions.filter(x=>x.type==='ms.vss-distributed-task.task')){
+  const task=require('../'+c.properties.name+'/task.json');
+  assert.equal(task.version.Major,0);
+ }
 });

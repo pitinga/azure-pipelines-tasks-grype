@@ -1,6 +1,6 @@
 {
   "name": "azure-pipelines-tasks-grype",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Node24 Azure Pipelines tasks: install Grype + Syft and scan vulnerabilities",
   "license": "MIT",
